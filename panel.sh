@@ -1,180 +1,310 @@
 #!/bin/bash
 
+#####################################################################################################
+# HERBSTLUFT PANEL CONFIG
+#####################################################################################################
+
+
+
+
+# function wrapping the herbstclient command
 hc() { "${herbstclient_command[@]:-herbstclient}" "$@" ;}
+
+#==============================================================================
+# theme 
+#==============================================================================
+
+# load theme file
+source $HOME/.config/herbstluftwm/panel-theme.sh
+
+#==============================================================================
+# variables 
+#==============================================================================
+
+#-geometry---------------------------------------------------------------------
+
+# get monitor dimensions
 monitor=${1:-0}
-geometry=( $(herbstclient monitor_rect "$monitor") )
-if [ -z "$geometry" ] ;then
-    echo "Invalid monitor $monitor"
-    exit 1
-fi
-# geometry has the format W H X Y
+geometry=( $(hc monitor_rect $monitor) )
+
+# set panel dimensions
 x=${geometry[0]}
 y=${geometry[1]}
-panel_width=${geometry[2]}
-panel_height=20
-font="-*-dejavu sans mono-medium-r-normal-*-14-*-*-*-*-*-*-*"
-bgcolor=$(hc get frame_border_normal_color)
-selbg=$(hc get window_border_active_color)
-selfg='#101010'
+w=${geometry[2]}
+h=$((${geometry[3]}/65))
 
-####
-# Try to find textwidth binary.
-# In e.g. Ubuntu, this is named dzen2-textwidth.
-if which textwidth &> /dev/null ; then
-    textwidth="textwidth";
-elif which dzen2-textwidth &> /dev/null ; then
-    textwidth="dzen2-textwidth";
-else
-    echo "This script requires the textwidth tool of the dzen2 project."
-    exit 1
-fi
-####
-# true if we are using the svn version of dzen2
-# depending on version/distribution, this seems to have version strings like
-# "dzen-" or "dzen-x.x.x-svn"
-if dzen2 -v 2>&1 | head -n 1 | grep -q '^dzen-\([^,]*-svn\|\),'; then
-    dzen2_svn="true"
-else
-    dzen2_svn=""
-fi
+#-settings---------------------------------------------------------------------
 
-if awk -Wv 2>/dev/null | head -1 | grep -q '^mawk'; then
-    # mawk needs "-W interactive" to line-buffer stdout correctly
-    # http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=593504
-    uniq_linebuffered() {
-      awk -W interactive '$0 != l { print ; l=$0 ; fflush(); }' "$@"
-    }
-else
-    # other awk versions (e.g. gawk) issue a warning with "-W interactive", so
-    # we don't want to use it there.
-    uniq_linebuffered() {
-      awk '$0 != l { print ; l=$0 ; fflush(); }' "$@"
-    }
-fi
+wireless_client="wicd-client"
+dzen="dzen2 -x $x -y $y -w $w -h $h -fn $font -ta l -bg $panel_bg -fg $panel_fg"
 
-hc pad $monitor $panel_height
+#==============================================================================
+# functions 
+#==============================================================================
 
+icon() {
+    echo "^bg(${1})^fg(${2}) ^i($icon_path/${3}.xbm) ^bg()^fg()"
+}
+
+bar() {
+    bar_height=$(echo "$h*$bar_h" | bc)
+    echo $3 | gdbar -w $bar_w -h $bar_height $bar_style -bg ${1} -fg ${2}
+}
+
+function uniq_linebuffered() {
+   awk '$0 != l { print ; l=$0 ; fflush(); }' "$@"
+}
+
+#-widgets----------------------------------------------------------------------
+
+battery_icon() {
+    if [ "$battery_status" == "Full" ]; then
+        echo $(icon $battery_icon_style $battery_full_icon)
+    elif [ "$battery_status" == "Charging" ]; then
+        echo $(icon $battery_icon_style $battery_charging_icon)
+    elif [ "$battery_status" == "Discharging" ]; then
+        echo $(icon $battery_icon_style $battery_discharging_icon)
+    else
+        echo $(icon $battery_icon_style $battery_missing_icon)
+    fi
+}
+
+battery_percentage() {
+    # TODO support more than one battery
+    if [ -z "${1}" ]; then 
+        echo "ac"
+    elif [ ${1} -le $battery_critical_percentage ] && 
+         [ $battery_status == "Discharging" ]; then
+         $(bar $battery_critical_fg_color $battery_critical_bg_color ${1})
+    else
+        echo -n "$(bar $bar_bg $bar_fg ${1})"
+    fi
+}
+
+battery() {
+    # TODO support more than one battery
+    battery_status=$(acpi -b | egrep -o "Battery 0.*" |\
+        egrep -o "(Full|Charging|Discharging|Unknown)")
+    echo $(battery_icon)
+}
+
+playing() {
+    mpc -h passwd@localhost -f "$now_playing_format" current
+}
+
+temp() {
+    echo -n "$(bar $temp_bar_bg $temp_bar_fg ${1})"
+}
+
+volume() {
+    volume=$(amixer get Master | egrep -o "[0-9]+%" | tr -d "%")
+        echo -n "^ca(1, amixer -q set Master 5%-)"
+        echo -n "^ca(3, amixer -q set Master 5%+)"
+        echo -n "^ca(2, amixer -q set Master toggle)"
+        if [ -z "$(amixer get Master | grep "\[on\]")" ]; then
+            echo -n "$(bar $bar_bg $bar_fg $volume)"
+        else
+            echo -n "$(bar $bar_bg $bar_fg $volume)"
+        fi
+        echo "^ca()^ca()^ca()"
+}
+
+#==============================================================================
+# execution  
+#==============================================================================
+
+# leave room for the panel
+hc pad $monitor $h
+
+#-event-generating-------------------------------------------------------------
 {
-    ### Event generator ###
-    # based on different input data (mpc, date, hlwm hooks, ...) this generates events, formed like this:
-    #   <eventname>\t<data> [...]
-
-    while true ; do
-        # Date.
-        date +$'date\t^fg(#FFFFFF)%H:%M^fg(#AAAAAA):%S^fg(#FFFFFF), %a %d.%m^fg(#AAAAAA).%Y'
-        sleep 0.5 || break
+    # conky
+    conky -c $HOME/.conky/statusbar | while read -r conky_reply; do
+        echo -e "conky $conky_reply";
     done > >(uniq_linebuffered) &
     childpid=$!
+
+    # herbstluftwm event
     hc --idle
+
     kill $childpid
-} 2> /dev/null | {
-    IFS=$'\t' read -ra tags <<< "$(hc tag_status $monitor)"
-    visible=true
+
+} | tee /dev/stderr | {
+
+    # get tags from herbstluft 
+    tags=( $(hc tag_status $monitor) )
     date=""
+    conky=""
     windowtitle=""
+
+#-draw-tags--------------------------------------------------------------------
     while true ; do
-
-        ### Output ###
-        # This part prints dzen data based on the _previous_ data handling run,
-        # and then waits for the next event to happen.
-
-        bordercolor="#26221C"
-        separator="^bg()^fg($selbg)|"
-        # draw tags
         for i in "${tags[@]}" ; do
             case ${i:0:1} in
-                '#')
-                    echo -n "^bg(#FFFFFF)^fg(#111111)"
+                '.')            # tag is empty
+                    echo -n "^bg($unused_bg)^fg($unused_fg)"
                     ;;
-                '+')
-                    echo -n "^bg(#3C3D42)^fg(#FFFFFF)"
+                ':')            # tag is not empty
+                    echo -n "^bg($used_bg)^fg($used_fg)"
                     ;;
-                ':')
-                    echo -n "^bg()^fg(#FFFFFF)"
+                '#')            # currently focused on active monitor
+                    echo -n "^bg($active_bg)^fg($active_fg)"
                     ;;
-                '!')
-                    echo -n "^bg(#FF0675)^fg(#141414)"
+                '+')            # not focused but on active monitor
+                    echo -n "^bg($inactive_bg)^fg($inactive_fg)"
+                    ;;
+                # '-', '%' are still missing
+                '!')            # urgent tag
+                    echo -n "^bg($urgent_bg)^fg($urgent_fg)"
                     ;;
                 *)
-                    echo -n "^bg()^fg(#505156)"
+                    echo -n "^bg()^fg()"
                     ;;
             esac
-            if [ ! -z "$dzen2_svn" ] ; then
-                # clickable tags if using SVN dzen
-                echo -n "^ca(1,\"${herbstclient_command[@]:-herbstclient}\" "
-                echo -n "focus_monitor \"$monitor\" && "
-                echo -n "\"${herbstclient_command[@]:-herbstclient}\" "
-                echo -n "use \"${i:1}\") ${i:1} ^ca()"
-            else
-                # non-clickable tags if using older dzen
-                echo -n " ${i:1} "
-            fi
+
+            # clickable tags 
+            echo -n "^ca(1,\"herbstclient\" "
+            echo -n "focus_monitor \"$monitor\" && "
+            echo -n "\"${herbstclient_command[@]:-herbstclient}\" "
+            echo -n "use \"${i:1}\") ${i:1} ^ca()"
         done
-        echo -n "$separator"
-        echo -n "^bg()^fg() ${windowtitle//^/^^}"
-        # small adjustments
-        right="$separator^bg()  $date"
-        right_text_only=$(echo -n "$right" | sed 's.\^[^(]*([^)]*)..g')
-        # get width of right aligned text.. and add some space..
-        width=$($textwidth "$font" "$right_text_only    ")
-        echo -n "^pa($(($panel_width - $width)))$right"
+
+        echo -n "$sep"
+        
+        # draw window title
+        echo -n "^bg($title_bg)^fg($title_fg) ${windowtitle//^/^^}"
+
+#==============================================================================
+# draw right part of bar
+#==============================================================================
+        
+#-parse-conky-stats------------------------------------------------------------
+        # parse conky stats 
+        IFS='|' read -ra conky_stats <<< "$conky"
+        for i in "${conky_stats[@]}"; do
+            read -ra stat <<< "$i"
+            case "${stat[0]}" in
+                UPTIME)
+                    uptime="${stat[@]:1}"
+                    ;;
+                CPU)
+                    cpu="${stat[@]:1}"
+                    ;;
+                TIME)
+                    time="${stat[@]:1}"
+                    ;;
+                DATE)
+                    date="${stat[@]:1}"
+                    ;;
+                BAT)
+                    bat="${stat[@]:1}"
+                    ;;
+                TEMPCPU)
+                    temp="${stat[@]:1}"
+                    ;;
+            esac
+        done
+
+        right="$sep_style"
+        text="$sep"
+        width=0
+
+#-draw-volume------------------------------------------------------------------
+        right="$right$(icon $volume_icon_style $volume_icon)"
+        right="$right$padding"
+        right="$right$(volume)"
+        right="$right$sep_style"
+        text="$text$padding$sep"
+        width=$(($width+$icon_width+$bar_w))
+
+#-draw-cpu---------------------------------------------------------------------
+        if [ ${#cpu} == 2 ]; then
+            # pad cpu string
+            cpu=" $cpu"
+        fi
+        right="$right$(icon $cpu_icon_style $cpu_icon)"
+        right="$right$padding"
+        right="$right$cpu_style$cpu"
+        right="$right$sep_style"
+        text="$text$padding$cpu$sep"
+        width=$(($width+$icon_width))
+
+#-draw-cpu-temp----------------------------------------------------------------
+        right="$right$(icon $temp_icon_style $temp_icon)"
+        right="$right$padding"
+        right="$right$(temp $temp)"
+        right="$right$sep_style"
+        text="$text$padding$sep"
+        width=$(($width+$icon_width+$bar_w))
+
+#-draw-mpd---------------------------------------------------------------------
+        playing=$(now_playing)
+        if [ ! -z "$playing" ]; then
+            right="$right$(icon $playing_icon_style $now_playing_icon)"
+            right="$right$padding"
+            right="$right$playing_style$playing" 
+            right="$right$sep_syle"
+            text="$text$padding$playing$sep"
+            width=$(($width+$icon_width))
+        fi
+
+#-draw-battery-----------------------------------------------------------------
+        right="$right$(battery $bat)"
+        right="$right$padding"
+        right="$right$(battery_percentage $bat)"
+        right="$right$sep_style"
+        text="$text$padding$sep"
+        width=$(($width+$icon_width+$bar_w))
+
+#-draw-clock-------------------------------------------------------------------
+        right="$right$(icon $clock_icon_style $clock_icon)"
+        right="$right$padding"
+        right="$right$date_style$date"
+        right="$right$padding"
+        right="$right$clock_style$time"
+        right="$right$sep_style"
+        text="$text$padding$time$padding$date$sep"
+        width=$(($width+$icon_width))
+       
+#-finish-output----------------------------------------------------------------
+        width=$(($width+$(textwidth "$font" "$text"))) 
+
+        echo -n "^pa($(($w - $width)))$right"
         echo
 
-        ### Data handling ###
-        # This part handles the events generated in the event loop, and sets
-        # internal variables based on them. The event and its arguments are
-        # read into the array cmd, then action is taken depending on the event
-        # name.
-        # "Special" events (quit_panel/togglehidepanel/reload) are also handled
-        # here.
-
+#==============================================================================
+# handle events
+#==============================================================================
         # wait for next event
-        IFS=$'\t' read -ra cmd || break
+        read line || break
+        cmd=( $line )
         # find out event origin
+        echo "Command: ${cmd[0]}" >&2
         case "${cmd[0]}" in
             tag*)
-                #echo "resetting tags" >&2
-                IFS=$'\t' read -ra tags <<< "$(hc tag_status $monitor)"
+                # reset tags
+                tags=( $(hc tag_status $monitor) )
                 ;;
             date)
-                #echo "resetting date" >&2
-                date="${cmd[@]:1}"
+                # reset date
+                time=$(date +"$clock_format")
+                date=$(date +"$date_format")
+                ;;
+            conky*)
+                conky="${cmd[@]:1}"
                 ;;
             quit_panel)
                 exit
                 ;;
-            togglehidepanel)
-                currentmonidx=$(hc list_monitors | sed -n '/\[FOCUS\]$/s/:.*//p')
-                if [ "${cmd[1]}" -ne "$monitor" ] ; then
-                    continue
-                fi
-                if [ "${cmd[1]}" = "current" ] && [ "$currentmonidx" -ne "$monitor" ] ; then
-                    continue
-                fi
-                echo "^togglehide()"
-                if $visible ; then
-                    visible=false
-                    hc pad $monitor 0
-                else
-                    visible=true
-                    hc pad $monitor $panel_height
-                fi
-                ;;
             reload)
                 exit
-                ;;
+               ;;
             focus_changed|window_title_changed)
                 windowtitle="${cmd[@]:2}"
                 ;;
-            #player)
-            #    ;;
         esac
     done
-
-    ### dzen2 ###
-    # After the data is gathered and processed, the output of the previous block
-    # gets piped to dzen2.
-
-} 2> /dev/null | dzen2 -w $panel_width -x $x -y $y -fn "$font" -h $panel_height \
-    -e 'button3=;button4=exec:herbstclient use_index -1;button5=exec:herbstclient use_index +1' \
-    -ta l -bg "$bgcolor" -fg '#efefef'
+# pipe result to dzen
+#} 2> /dev/null | $dzen 
+# use this for debug messages
+} | $dzen
