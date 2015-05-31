@@ -91,10 +91,10 @@ hc keybind $Mod-c		cycle
 hc keybind $Mod-i		jumpto urgent
 
 # cmus
-hc keybind $Mod-F9		spawn	cmus-remote -s	# stop
-hc keybind $Mod-F10		spawn	cmus-remote -u	# pause
-hc keybind $Mod-F11		spawn	cmus-remote -r	# previous
-hc keybind $Mod-F12		spawn	cmus-remote -n	# next
+hc keybind $Mod-F8		spawn	cmus-remote -s	# stop
+hc keybind $Mod-F7		spawn	cmus-remote -u	# pause
+hc keybind $Mod-F5		spawn	cmus-remote -r	# previous
+hc keybind $Mod-F6		spawn	cmus-remote -n	# next
 
 # stuff
 hc keybind $Mod-b		spawn	chromium --force-device-scale-factor=1
