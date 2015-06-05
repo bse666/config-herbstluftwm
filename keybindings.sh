@@ -12,7 +12,7 @@
 #==========================================================================================
 
 # Mod1=Alt, Mod4=Win
-Mod=Mod4
+Mod=Mod1
 
 
 
@@ -47,8 +47,8 @@ hc keybind $Mod-comma		use_index	-1 --skip-visible
 hc keybind $Mod-Shift-e		quit
 hc keybind $Mod-Shift-r		reload
 hc keybind $Mod-Shift-q		close
-hc keybind $Mod-t		spawn	xfce4-terminal
-hc keybind $Mod-d		spawn	dmenu_run -fn '-*-dejavu sans mono-medium-r-normal-*-12-*-*-*-*-*-*-*'
+hc keybind $Mod-Return		spawn	urxvtc
+hc keybind $Mod-d		spawn	dmenu_run
 hc keybind $Mod-Shift-k		spawn	shutdown -h now
 hc keybind $Mod-Shift-j		spawn	shutdown -r now
 hc keybind $Mod-l		spawn	i3lock -c 000000
@@ -120,15 +120,18 @@ hc keybind $Mod-c		cycle
 
 
 #==========================================================================================
-# STUFF
+# F-KEYS
 #==========================================================================================
 
-# stuff
-hc keybind $Mod-b		spawn	chromium --force-device-scale-factor=1
-hc keybind $Mod-Shift-b		spawn	chromium --force-device-scale-factor=1 --incognito
-
-# cmus
-hc keybind $Mod-F9		spawn	cmus-remote -s	# stop
-hc keybind $Mod-F10		spawn	cmus-remote -u	# pause
-hc keybind $Mod-F11		spawn	cmus-remote -r	# previous
-hc keybind $Mod-F12		spawn	cmus-remote -n	# next
+hc keybind $Mod-F1		spawn	urxvtc -e mc
+hc keybind $Mod-F2		spawn	chromium --force-device-scale-factor=1
+hc keybind $Mod-Shift-F2	spawn	chromium --force-device-scale-factor=1 --incognito
+hc keybind $Mod-F3		spawn	urxvtc -e calc
+hc keybind $Mod-F4		spawn	urxvtc -e cmus
+hc keybind $Mod-F5		spawn	cmus-remote -r # previous
+hc keybind $Mod-F6		spawn	cmus-remote -n # next
+hc keybind $Mod-F7		spawn	cmus-remote -u # play/pause
+hc keybind $Mod-F8		spawn	cmus-remote -s # stop
+hc keybind $Mod-F9		spawn	amixer -q sset Master toggle
+hc keybind $Mod-F10		spawn	amixer -q sset Master 5%-
+hc keybind $Mod-F11		spawn	amixer -q sset Master 5%+
