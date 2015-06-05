@@ -37,7 +37,7 @@ done
 hc keybind $Mod-Shift-e		quit
 hc keybind $Mod-Shift-r		reload
 hc keybind $Mod-Shift-q		close
-hc keybind $Mod-t		spawn	urxvtc
+hc keybind $Mod-Return		spawn	urxvtc
 hc keybind $Mod-d		spawn	dmenu_run
 #hc keybind $Mod-Shift-k	spawn	shutdown -h now
 hc keybind $Mod-Shift-k		spawn	systemctl poweroff
