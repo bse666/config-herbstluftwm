@@ -9,3 +9,5 @@ This is a new configuration; work in progress.
   * Panels for 2 Monitor setup.
 * Complete theme.
 * Maybe add a check for additional dependencies.
+* Different configs for single and multi Monitor setup.
+  * Autodetection.
