@@ -71,7 +71,7 @@ battery_icon() {
 battery_percentage() {
     # TODO support more than one battery
     if [ -z "${1}" ]; then 
-        echo "ac"
+        echo "AC"
     elif [ ${1} -le $battery_critical_percentage ] && 
          [ $battery_status == "Discharging" ]; then
          $(bar $battery_critical_fg_color $battery_critical_bg_color ${1})
