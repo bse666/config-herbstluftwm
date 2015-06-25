@@ -39,10 +39,8 @@ hc keybind $Mod-Shift-r		reload
 hc keybind $Mod-Shift-q		close
 hc keybind $Mod-Return		spawn	urxvtc
 hc keybind $Mod-d		spawn	dmenu_run
-#hc keybind $Mod-Shift-k	spawn	shutdown -h now
-hc keybind $Mod-Shift-k		spawn	systemctl poweroff
-#hc keybind $Mod-Shift-j	spawn	shutdown -r now
-hc keybind $Mod-Shift-j		spawn	systemctl reboot
+hc keybind $Mod-Shift-k		spawn	shutdown -h now
+hc keybind $Mod-Shift-j		spawn	shutdown -r now
 hc keybind $Mod-l		spawn	i3lock -c 000000
 
 # focusing clients
@@ -94,7 +92,7 @@ hc keybind $Mod-i		jumpto urgent
 hc keybind $Mod-F1		spawn	urxvtc -e mc
 hc keybind $Mod-F2		spawn	chromium --force-device-scale-factor=1
 hc keybind $Mod-Shift-F2	spawn	chromium --force-device-scale-factor=1 --incognito
-hc keybind $Mod-F3		spawn	urxvtc -e calc
+hc keybind $Mod-F3		spawn	urxvtc -e vim
 hc keybind $Mod-F4		spawn	urxvtc -e cmus
 hc keybind $Mod-F5		spawn	cmus-remote -r	# previous
 hc keybind $Mod-F6		spawn	cmus-remote -n	# next
