@@ -39,8 +39,13 @@ hc keybind $Mod-Shift-r		reload
 hc keybind $Mod-Shift-q		close
 hc keybind $Mod-Return		spawn	urxvtc
 hc keybind $Mod-d		spawn	dmenu_run
+<<<<<<< HEAD
 hc keybind $Mod-Shift-k		spawn	shutdown -h now
 hc keybind $Mod-Shift-j		spawn	shutdown -r now
+=======
+hc keybind $Mod-Shift-k	spawn	shutdown -h now
+hc keybind $Mod-Shift-j	spawn	shutdown -r now
+>>>>>>> 5aa5271bb71bcefe3d09128c34a22fbe24da1eff
 hc keybind $Mod-l		spawn	i3lock -c 000000
 
 # focusing clients
@@ -68,7 +73,6 @@ hc keybind $Mod-Control-Left	resize	left	+$resizestep
 hc keybind $Mod-Control-Down	resize	down	+$resizestep
 hc keybind $Mod-Control-Up	resize	up	+$resizestep
 hc keybind $Mod-Control-Right	resize	right	+$resizestep
-1
 
 # cycle through tags
 hc keybind $Mod-period		use_index	+1 --skip-visible
