@@ -39,10 +39,8 @@ hc keybind $Mod-Shift-r		reload
 hc keybind $Mod-Shift-q		close
 hc keybind $Mod-Return		spawn	urxvtc
 hc keybind $Mod-d		spawn	dmenu_run
-#hc keybind $Mod-Shift-k	spawn	shutdown -h now
-hc keybind $Mod-Shift-k		spawn	systemctl poweroff
-#hc keybind $Mod-Shift-j	spawn	shutdown -r now
-hc keybind $Mod-Shift-j		spawn	systemctl reboot
+hc keybind $Mod-Shift-k	spawn	shutdown -h now
+hc keybind $Mod-Shift-j	spawn	shutdown -r now
 hc keybind $Mod-l		spawn	i3lock -c 000000
 
 # focusing clients
