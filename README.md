@@ -11,3 +11,4 @@ This is a new configuration; work in progress.
 * Maybe add a check for additional dependencies.
 * Different configs for single and multi Monitor setup.
   * Autodetection.
+* Create a prefs file, that sets variables according to used OS.
