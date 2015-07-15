@@ -22,9 +22,6 @@ hc unlock
 # setup monitors
 hc detect_monitors
 
-# start composite manager
-compton -b -f
-
 
 # PANELS
 
