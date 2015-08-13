@@ -9,7 +9,7 @@
 # MODKEY
 
 # Mod1=Alt, Mod4=Win
-Mod=Mod1
+Mod=Mod4
 
 
 # TAGS

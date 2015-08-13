@@ -18,7 +18,7 @@ panel_bg=$(hc get frame_bg_normal_color)
 panel_fg="#dddddd"
 
 # font
-font="-*-dina-medium-r-normal-*-13-*-*-*-*-*-*-*"
+font="-*-terminus-medium-r-normal-*-14-*-*-*-*-*-*-*"
 
 #-title------------------------------------------------------------------------
 title_bg=$panel_bg
