@@ -8,8 +8,13 @@ This is a new configuration; work in progress.
 * Complete my own panel config.
   * Panels for 2 Monitor setup.
 * Complete theme.
+* Colorscheme switch.
 * Maybe add a check for additional dependencies.
 * Different configs for single and multi Monitor setup.
   * Autodetection.
 * Create a prefs file, that sets variables according to used OS.
+<<<<<<< HEAD
 * Custom settings file in user home.
+=======
+  * Set individual for different shells.
+>>>>>>> 3b281527a4240b57d6e1db4a28faafdb58d010b9
