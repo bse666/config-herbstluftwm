@@ -12,3 +12,4 @@ This is a new configuration; work in progress.
 * Different configs for single and multi Monitor setup.
   * Autodetection.
 * Create a prefs file, that sets variables according to used OS.
+* Custom settings file in user home.
