@@ -6,6 +6,22 @@
 
 
 
+# CHOOSE COLORSCHEME
+dialog --menu "Choose Colorscheme:" 17 40 10 \
+	1 "Solarized Dark" \
+	2 "Lucius Dark Low Contrast" \
+	2>/tmp/temp
+
+input=$(cat /tmp/temp)
+rm -f /tmp/temp
+
+case $input in
+	"1") source $HOME/.config/herbstluftwm/colorschemes/solarized-dark.sh;;
+	"2") source $HOME/.config/herbstluftwm/colorschemes/lucius-dark-low-contrast.sh;;
+	*);;
+esac
+
+
 # SET IN XRESOURCES
 echo "!###############################
 !## COLORS SET BY HERBSTLUFT ###
@@ -35,6 +51,7 @@ echo "!###############################
 *color15: $COLOR15" > $HOME/.Xresources.d/colors
 
 xrdb -I$HOME ~/.Xresources
+
 
 # SET IN PANEL-THEME
 
