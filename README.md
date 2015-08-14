@@ -14,3 +14,4 @@ This is a new configuration; work in progress.
   * Autodetection.
 * Create a prefs file, that sets variables according to used OS.
 * Custom settings file in user home.
+* DPMS and energy saving.
