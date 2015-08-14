@@ -42,7 +42,7 @@ done
 hc set tree_style '╾│ ├└╼─┐'
 hc set wmname 'Herbstluftwm'
 hc set auto_detect_monitors		1
-hc set focus_follows_mouse		1
+hc set focus_follows_mouse		0
 hc set focus_stealing_prevention	1
 hc set mouse_recenter_gap		1
 hc set pseudotile_center_threshold	0
@@ -55,6 +55,9 @@ hc set swap_monitors_to_get_tag		0
 
 # load theme settings
 source $HOME/.config/herbstluftwm/theme.sh
+
+# load color settings
+
 
 
 # RULES
