@@ -89,8 +89,10 @@ hc keybind $Mod-i		jumpto urgent
 
 # f-keys
 hc keybind $Mod-F1		spawn	urxvtc -e mc
-hc keybind $Mod-F2		spawn	chromium --force-device-scale-factor=1
-hc keybind $Mod-Shift-F2	spawn	chromium --force-device-scale-factor=1 --incognito
+#hc keybind $Mod-F2		spawn	chromium --force-device-scale-factor=1
+#hc keybind $Mod-Shift-F2	spawn	chromium --force-device-scale-factor=1 --incognito
+hc keybind $Mod-F2		spawn	firefox
+hc keybind $Mod-Shift-F2	spawn	firefox --private-window
 hc keybind $Mod-F3		spawn	urxvtc -e vim
 hc keybind $Mod-F4		spawn	urxvtc -e cmus
 hc keybind $Mod-F5		spawn	cmus-remote -r	# previous
