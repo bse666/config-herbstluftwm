@@ -10,34 +10,34 @@ COLORBACKGROUND="#303030"
 COLORFOREGROUND="#bcbcbc"
 COLORCURSOR="#bcbcbc"
 
-# black dark/light
+# black
 COLOR0="#303030"
 COLOR8="#303030"
 
-# red dark/light
+# red
 COLOR1="#d75f5f"
 COLOR9="#d75f5f"
 
-# green dark/light
+# green
 COLOR2="#87af5f"
 COLOR10="#87af5f"
 
-# yellow dark/light
+# yellow
 COLOR3="#afaf87"
 COLOR11="#afaf87"
 
-# blue dark/light
+# blue
 COLOR4="#5fafd7"
 COLOR12="#5fafd7"
 
-# magenta dark/light
+# magenta
 COLOR5="#af87af"
 COLOR13="#af87af"
 
-# cyan dark/light
+# cyan
 COLOR6="#5faf87"
 COLOR14="#5faf87"
 
-# white dark/light
+# white
 COLOR7="#bcbcbc"
 COLOR15="#bcbcbc"
