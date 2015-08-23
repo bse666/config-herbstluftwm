@@ -32,6 +32,7 @@ dialog --clear --menu "Choose Colorscheme:" 17 40 10 \
 	22 "Tomorrow Light" \
 	23 "Twilight Dark" \
 	24 "Twilight Light" \
+	25 "Apprentice" \
 	2>/tmp/temp
 
 input=$(cat /tmp/temp)
@@ -62,6 +63,7 @@ case $input in
 	"22") source $HOME/.config/herbstluftwm/colorschemes/tomorrow-light.sh;;
 	"23") source $HOME/.config/herbstluftwm/colorschemes/twilight-dark.sh;;
 	"24") source $HOME/.config/herbstluftwm/colorschemes/twilight-light.sh;;
+	"25") source $HOME/.config/herbstluftwm/colorschemes/apprentice.sh;;
 
 	*);;
 esac
