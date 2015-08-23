@@ -99,9 +99,9 @@ hc keybind $Mod-c		cycle
 # F-KEYS
 
 hc keybind $Mod-F1		spawn	urxvtc -e mc
-hc keybind $Mod-F2		spawn	chromium --force-device-scale-factor=1
-hc keybind $Mod-Shift-F2	spawn	chromium --force-device-scale-factor=1 --incognito
-hc keybind $Mod-F3		spawn	urxvtc -e vimvimvimvimvimvimvimvimvimc -e cmus
+hc keybind $Mod-F2		spawn	firefox
+hc keybind $Mod-Shift-F2	spawn	firefox --private-window
+hc keybind $Mod-F3		spawn	urxvtc -e cmus
 hc keybind $Mod-F5		spawn	cmus-remote -r # previous
 hc keybind $Mod-F6		spawn	cmus-remote -n # next
 hc keybind $Mod-F7		spawn	cmus-remote -u # play/pause
