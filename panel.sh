@@ -23,7 +23,7 @@ geometry=( $(hc monitor_rect $monitor) )
 x=${geometry[0]}
 y=${geometry[1]}
 w=${geometry[2]}
-h=$((${geometry[3]}/50))
+h=20
 
 
 # SETTINGS
